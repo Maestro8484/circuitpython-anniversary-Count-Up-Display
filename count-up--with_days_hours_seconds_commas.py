@@ -6,7 +6,7 @@
 This example will figure out the current local time using the internet, and
 then draw out a count-up clock since an event occurred!
 Once the event is happening, a new graphic is shown
-Additionally displays total days and minutes elapsed since the event
+Additionally displays total days, minutes and seconds elapsed since the event
 All large numbers are formatted with commas for readability
 """
 import time
@@ -44,12 +44,13 @@ hours_position = (122, 35)
 minutes_position = (30, 60)
 total_days_position = (30, 85)    # Position for total days display
 total_minutes_position = (30, 110) # Position for total minutes display
+total_seconds_position = (30, 135) # Position for total seconds display
 text_color = 0x418fde    #0x66a3ff light blue
 
 text_areas = []
 # Add text areas for all displays including total days
 for pos in (years_position, days_position, hours_position, minutes_position, 
-            total_days_position, total_minutes_position):
+            total_days_position, total_minutes_position, total_seconds_position):
     textarea = Label(big_font, text='  ')
     textarea.x = pos[0]
     textarea.y = pos[1]
@@ -90,11 +91,14 @@ while True:
     since = time.mktime(now) - time.mktime(event_time)
     print("Time since not including years (in sec):", since)
     
-    # Calculate total minutes from seconds
-    total_minutes = int((since + (years_since * 31536000)) // 60)  
+    # Calculate total seconds first
+    total_seconds = int(since + (years_since * 31536000))  # 31536000 = seconds in a year
     
-    # Calculate total days from total minutes
-    total_days = int(total_minutes // 1440)  # 1440 = minutes in a day
+    # Calculate total minutes from total seconds
+    total_minutes = int(total_seconds // 60)
+    
+    # Calculate total days from total seconds
+    total_days = int(total_seconds // 86400)  # 86400 = seconds in a day
     
     # Calculate regular time components
     sec_since = since % 60
@@ -111,6 +115,7 @@ while True:
           (years_since, days_since, hours_since, mins_since, sec_since))
     print("Total days elapsed: %s" % format_with_commas(total_days))
     print("Total minutes elapsed: %s" % format_with_commas(total_minutes))
+    print("Total seconds elapsed: %s" % format_with_commas(total_seconds))
     
     # Format all numbers with commas
     text_areas[0].text = '{}'.format(years_since)  # years typically won't need commas
@@ -119,6 +124,7 @@ while True:
     text_areas[3].text = '{}'.format(mins_since)   # minutes won't need commas
     text_areas[4].text = format_with_commas(total_days)     # format total days with commas
     text_areas[5].text = format_with_commas(total_minutes)  # format total minutes with commas
+    text_areas[6].text = format_with_commas(total_seconds)  # format total seconds with commas
 
     # update every 10 seconds
     time.sleep(10)
